@@ -12,6 +12,73 @@ interface ExpenseFilters {
   search?: string;
 }
 
+import { GoogleGenerativeAI } from "@google/generative-ai";
+// adjust path to your model
+
+const genAI = new GoogleGenerativeAI("AIzaSyAj15XI7h97dinskxV2D_EdeiyWzwgGwnk");
+
+export const createAIExpense = async (req: Request, res: Response) => {
+  try {
+    const { text } = req.body;
+    const userId = req.params.user;
+
+    if (!text || !userId) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+You are an expense extractor. Convert this user input into a structured JSON with fields like "title", "amount", "category", "date", "description", "paymentMethod", "isRecurring", "tags".
+
+If any field is missing or unknown, leave it empty (e.g. "") and we will handle it.
+
+Input: "${text}"
+
+Output:
+{
+  "title": string,
+  "amount": number,
+  "category": string,
+  "date": string,
+  "description": string,
+  "paymentMethod": string,
+  "isRecurring": boolean,
+  "tags": string[]
+}
+`;
+
+    const result = await model.generateContent(prompt);
+    const output = result.response.text().trim();
+
+    // Clean and parse the JSON
+    const clean = output.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(clean);
+
+    // Enrich missing fields with default values
+    const enriched = {
+      title: parsed.title || "Unknown Expense",
+      amount: parsed.amount || 0,
+      category: parsed.category || "Miscellaneous",
+      date: parsed.date || new Date().toISOString().split("T")[0],
+      description: parsed.description || "No description provided.",
+      paymentMethod: parsed.paymentMethod || "Cash",
+      isRecurring:
+        typeof parsed.isRecurring === "boolean" ? parsed.isRecurring : false,
+      tags: Array.isArray(parsed.tags) ? parsed.tags : [],
+      userId,
+    };
+
+    const expense: IExpense = new Expense(enriched);
+    await expense.save();
+
+    res.status(201).json(expense);
+  } catch (error: any) {
+    console.error("AI Expense Creation Failed:", error);
+    res.status(500).json({ message: "Failed to create AI expense" });
+  }
+};
+
 export const createExpense = async (req: Request, res: Response) => {
   try {
     const expense: IExpense = new Expense(req.body);
@@ -83,21 +150,6 @@ export const getExpense = async (req: Request, res: Response) => {
   }
 };
 
-export const updateExpense = async (req: Request, res: Response) => {
-  try {
-    const expense = await Expense.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user?.id },
-      req.body,
-      { new: true, runValidators: true }
-    );
-
-    if (!expense) return res.status(404).json({ message: "Expense not found" });
-    res.json(expense);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
 export const deleteExpense = async (req: Request, res: Response) => {
   try {
     const expense = await Expense.findOneAndDelete({
@@ -113,8 +165,8 @@ export const deleteExpense = async (req: Request, res: Response) => {
 
 export const getExpenseStats = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
-
+    const userId = req.params?.id;
+    console.log(userId, " User ID for stats");
     // Total expenses and amount
     const totalAggregation = await Expense.aggregate([
       { $match: { userId } },
