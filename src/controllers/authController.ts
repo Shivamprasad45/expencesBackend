@@ -93,8 +93,7 @@ export const getProfile = async (req: Request, res: Response) => {
 
 export const forgotPassword = async (req: Request, res: Response) => {
   const { email } = req.body;
-  console.log("ok");
-  console.log(email, "sddsds");
+
   try {
     const user = await User.findOne({ email });
 

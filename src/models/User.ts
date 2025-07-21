@@ -6,6 +6,8 @@ export interface IUser extends Document {
   password: string;
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
+  isPremium: boolean;
+  premiumSince?: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -14,6 +16,8 @@ const userSchema: Schema = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, minlength: 6 },
+    isPremium: { type: Boolean, default: false },
+    premiumSince: { type: Date },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
