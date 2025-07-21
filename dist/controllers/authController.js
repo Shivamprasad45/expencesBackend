@@ -91,8 +91,6 @@ const getProfile = async (req, res) => {
 exports.getProfile = getProfile;
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
-    console.log("ok");
-    console.log(email, "sddsds");
     try {
         const user = await User_1.default.findOne({ email });
         if (!user) {

@@ -42,6 +42,8 @@ const userSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, minlength: 6 },
+    isPremium: { type: Boolean, default: false },
+    premiumSince: { type: Date },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
 }, { timestamps: true });

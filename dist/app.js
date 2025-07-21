@@ -10,6 +10,7 @@ const db_1 = __importDefault(require("./config/db"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const expenseRoutes_1 = __importDefault(require("./routes/expenseRoutes"));
 dotenv_1.default.config();
+const payments_routes_1 = __importDefault(require("./routes/payments.routes"));
 const app = (0, express_1.default)();
 // Middleware
 app.use(express_1.default.json());
@@ -19,6 +20,7 @@ app.use("/api/expenses", expenseRoutes_1.default);
 (0, db_1.default)();
 // Routes
 app.use("/api/auth", authRoutes_1.default);
+app.use("/api/payment", payments_routes_1.default);
 // Health check endpoint
 app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "ok" });
