@@ -17,6 +17,10 @@ app.use("/api/expenses", expenseRoutes);
 
 // Connect Database
 connectDB();
+app.use((req, res, next) => {
+  console.log(`${req.method} request to ${req.url}`);
+  next();
+});
 
 // Routes
 app.use("/api/auth", authRoutes);

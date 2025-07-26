@@ -19,6 +19,10 @@ app.use((0, cors_1.default)());
 app.use("/api/expenses", expenseRoutes_1.default);
 // Connect Database
 (0, db_1.default)();
+app.use((req, res, next) => {
+    console.log(`${req.method} request to ${req.url}`);
+    next();
+});
 // Routes
 app.use("/api/auth", authRoutes_1.default);
 app.use("/api/payment", payments_routes_1.default);
