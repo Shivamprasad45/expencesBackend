@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { sendEmail } from "../utils/emailSender";
 // Generate token
-const generateToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
+const generateToken = (id: string, isPremium: boolean) => {
+  return jwt.sign({ id, isPremium }, process.env.JWT_SECRET as string, {
     expiresIn: "30d",
   });
 };
@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id.toString()),
+        token: generateToken(user._id.toString(), user.isPremium),
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -54,6 +54,7 @@ export const login = async (req: Request, res: Response) => {
       _id: any;
       name: string;
       email: string;
+      isPremium: boolean;
       matchPassword: (password: string) => Promise<boolean>;
     };
 
@@ -62,7 +63,8 @@ export const login = async (req: Request, res: Response) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id.toString()),
+        token: generateToken(user._id.toString(), user.isPremium),
+        isPremium: user.isPremium,
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });

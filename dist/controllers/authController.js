@@ -9,8 +9,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_1 = __importDefault(require("crypto"));
 const emailSender_1 = require("../utils/emailSender");
 // Generate token
-const generateToken = (id) => {
-    return jsonwebtoken_1.default.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, isPremium) => {
+    return jsonwebtoken_1.default.sign({ id, isPremium }, process.env.JWT_SECRET, {
         expiresIn: "30d",
     });
 };
@@ -33,7 +33,7 @@ const register = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                token: generateToken(user._id.toString()),
+                token: generateToken(user._id.toString(), user.isPremium),
             });
         }
         else {
@@ -57,7 +57,8 @@ const login = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                token: generateToken(user._id.toString()),
+                token: generateToken(user._id.toString(), user.isPremium),
+                isPremium: user.isPremium,
             });
         }
         else {

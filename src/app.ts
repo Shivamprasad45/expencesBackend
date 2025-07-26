@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes";
 import connectDB from "./config/db";
 import dotenv from "dotenv";
 import expenseRoutes from "./routes/expenseRoutes";
+import premiumRoutes from "./routes/Premiume.route";
 dotenv.config();
 
 import paymentRoutes from "./routes/payments.routes";
@@ -20,6 +21,8 @@ connectDB();
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/payment", paymentRoutes);
+
+app.use("/api/premium", premiumRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
