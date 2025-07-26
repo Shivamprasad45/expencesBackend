@@ -12,6 +12,8 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+
+// CORS configuration
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://expences-tracker-f.vercel.app"],

@@ -15,7 +15,10 @@ const payments_routes_1 = __importDefault(require("./routes/payments.routes"));
 const app = (0, express_1.default)();
 // Middleware
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+// CORS configuration
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:3000", "https://expences-tracker-f.vercel.app"],
+}));
 app.use("/api/expenses", expenseRoutes_1.default);
 // Connect Database
 (0, db_1.default)();
