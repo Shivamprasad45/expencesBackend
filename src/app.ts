@@ -16,11 +16,7 @@ app.use(express.json());
 // CORS configuration
 app.use(
   cors({
-    origin: [
-      "https://expences-tracker-f.vercel.app",
-      "http://localhost:3000",
-      "https://expences-tracker-f.vercel.app",
-    ],
+    origin: ["https://expences-tracker-f.vercel.app", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
