@@ -113,18 +113,29 @@ const getExpenses = async (req, res) => {
 exports.getExpenses = getExpenses;
 const getExpense = async (req, res) => {
     const userId = req.params.id;
-    console.log("userId:", userId);
+    // Parse pagination parameters with defaults
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
     }
     try {
-        const expenses = await Expense_1.default.find({ userId });
-        console.log(expenses, " Expenses found for user");
-        if (expenses.length === 0) {
-            return res.status(404).json({ message: "No expenses found" });
-        }
-        console.log(expenses, " Expense(s) found");
-        res.json(expenses);
+        const startIndex = (page - 1) * limit;
+        // Get total count for pagination info
+        const total = await Expense_1.default.countDocuments({ userId });
+        const expenses = await Expense_1.default.find({ userId })
+            .sort({ createdAt: -1 }) // Newest first
+            .skip(startIndex)
+            .limit(limit);
+        res.json({
+            expenses,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                itemsPerPage: limit,
+                totalItems: total,
+            },
+        });
     }
     catch (error) {
         res.status(500).json({ message: error.message });
