@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "dist/server.js",
  
+ 
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --exec ts-node src/server.ts",
-    "vercel-build": "npx tsc"
+    "dev": "nodemon --exec ts-node src/server.ts"
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
