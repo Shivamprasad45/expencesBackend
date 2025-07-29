@@ -17,20 +17,16 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["https://expences-tracker-f.vercel.app"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: ["https://expences-tracker-f.vercel.app", "http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
 );
-app.options("*", cors());
+
 app.use("/api/expenses", expenseRoutes);
 
 // Connect Database
 connectDB();
-app.use((req, res, next) => {
-  console.log(`${req.method} request to ${req.url}`);
-  next();
-});
 
 // Routes
 app.use("/api/auth", authRoutes);
