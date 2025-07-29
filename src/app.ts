@@ -23,6 +23,7 @@ app.use(
   })
 );
 
+app.options("*", cors());
 app.use("/api/expenses", expenseRoutes);
 
 // Connect Database
